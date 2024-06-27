@@ -4,6 +4,8 @@ import "./App.css";
 const App = () => {
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
+  const [str, setStr] = useState(0);
+  const [agi, setAgi] = useState(0);
   const [zombieFighters, setZombieFighters] = useState([
     {
       name: "Survivor",
@@ -80,46 +82,68 @@ const App = () => {
   const handleAddFighter = (event) => {
     if (money - event.price >= 0) {
       setTeam([...team, event]);
-      setMoney(money - event.price)
-      console.log(team)
+      setZombieFighters(
+        zombieFighters.filter((fighter) => fighter.name !== event.name)
+      );
+      setMoney(money - event.price);
+      setStr(str + event.strength);
+      setAgi(agi + event.agility);
     } else {
-      console.log('INSUFFICIENT FUNDS')
+      console.log("INSUFFICIENT FUNDS");
     }
-  }
+  };
+
+  const handleRemoveFighter = (event) => {
+    setTeam(team.filter((member) => member.name !== event.name));
+    setZombieFighters([...zombieFighters, event]);
+    setMoney(money + event.price);
+    setStr(str - event.strength);
+    setAgi(agi - event.agility);
+  };
 
   return (
     <>
       <h1>ZOMBIE FIGHTERS</h1>
       <h2>Funds: {money}</h2>
-      <h2>Team Strength: 0</h2>
-      <h2>Team Agility: 0</h2>
+      <h2>Team Strength: {str}</h2>
+      <h2>Team Agility: {agi}</h2>
       <h2>Team</h2>
-      {(team.length === 0) ? <p>Pick some team members!</p> : <ul>{team.map(member => (
-        <li key={member.name}>
-          <img src={member.img} alt="" />
+      {team.length === 0 ? (
+        <p>Pick some team members!</p>
+      ) : (
+        <ul>
+          {team.map((member) => (
+            <li key={member.name}>
+              <img src={member.img} alt="" />
               <h4>Name: {member.name}</h4>
               <p>$$$: {member.price}</p>
               <p>STR: {member.strength}</p>
               <p>AGI: {member.agility}</p>
-        </li>
-
-      ))}</ul>}
+              <button onClick={() => handleRemoveFighter(member)}>
+                REMOVE
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       <div>
         <h2>Fighters</h2>
         <ul>
-          {zombieFighters.map(zombieFighter => (
+          {zombieFighters.map((zombieFighter) => (
             <li key={zombieFighter.name}>
               <img src={zombieFighter.img} alt="" />
               <h4>Name: {zombieFighter.name}</h4>
               <p>$$$: {zombieFighter.price}</p>
               <p>STR: {zombieFighter.strength}</p>
               <p>AGI: {zombieFighter.agility}</p>
-              <button onClick={() => handleAddFighter(zombieFighter)}>ADD</button>
+              <button onClick={() => handleAddFighter(zombieFighter)}>
+                ADD
+              </button>
             </li>
           ))}
         </ul>
       </div>
     </>
-  )
+  );
 };
 export default App;
